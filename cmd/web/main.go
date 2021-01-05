@@ -17,7 +17,7 @@ type application struct {
 
 
 func main() {
-	addr := flag.String("addr", ":8000", "HTTP network address")
+	addr := flag.String("addr", ":4000", "HTTP network address")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -26,11 +26,20 @@ func main() {
 	config := pgx.ConnConfig{
 		Host: "localhost",
 		Port: 5432,
-		Database: "golang",
-		User: "golang_user",
-		Password: "1golang1",
+		Database: "GoDB",
+		User: "postgres",
+		Password: "beks300900",
 	}
-	conn, err := pgx.Connect(config)
+
+	poolConfig := pgx.ConnPoolConfig{
+		ConnConfig:     config,
+		MaxConnections: 10,
+		AfterConnect:   nil,
+		AcquireTimeout: 0,
+	}
+
+	conn, err := pgx.NewConnPool(poolConfig)
+
 	if err != nil {
 		errorLog.Fatal(err)
 	}

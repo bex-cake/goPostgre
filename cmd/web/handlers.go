@@ -15,15 +15,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s, err := app.snippets.Latest()
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	for _, snippet := range s {
-		fmt.Fprintf(w, "%v\n", snippet)
-	}
-
 	files := []string{
 		"./ui/html/home.page.gohtml",
 		"./ui/html/base.layout.gohtml",
@@ -38,6 +29,15 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	err = ts.Execute(w, nil)
 	if err != nil {
 		app.serverError(w, err)
+	}
+
+	s, err := app.snippets.Latest()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	for _, snippet := range s {
+		fmt.Fprintf(w, "%v\n", snippet)
 	}
 }
 
@@ -70,7 +70,7 @@ func (app *application) create(w http.ResponseWriter, r *http.Request)  {
 
 	title := "O snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
-	expires := "14"
+	expires := 14
 
 	id ,err := app.snippets.Insert(title, content, expires)
 	if err != nil {
